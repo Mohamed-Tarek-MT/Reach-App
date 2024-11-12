@@ -12,6 +12,8 @@ Reach is a social media platform that allows users to connect, share posts, and 
 ## Scrum Workflow
 - **Project Management**: We are using GitHub Projects to manage our Scrum board. Each sprint will include tasks categorized by stages: To Do, In Progress, In Review, and Done.
 - **Roles**:
-  - Abdalrahman Khaled: [Role/Responsibilities]
   - Mohamed Tarek: [Role/Responsibilities]
+  - Abdalrahman Khaled: [Role/Responsibilities]
   - Habiba Ayman: [Role/Responsibilities]
+  - Tasneem Ashraf: [Role/Responsibilities]
+  - Reem Ehab: [Role/Responsibilities]
