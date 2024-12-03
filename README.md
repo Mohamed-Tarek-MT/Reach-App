@@ -71,8 +71,8 @@ Access the app at:
 
 - curl (http://127.0.0.1:8000/posts/)
 
-#Project Structure
-##Reach-App/
+# Project Structure
+
 ### api/                 - Backend app containing views, models, serializers, and APIs
 ###  docs/               - MkDocs documentation files
 ###  static/             - Static assets (CSS, JS, images)
