@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.db.models import Q
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
-from .models import Post, Comment, Like
+from .models import Post, Comment, Like ,Friend, FriendRequest ,Notification
 from .forms import PostForm, CommentForm
 
 # Sign Up
@@ -90,15 +92,12 @@ def like_post(request, post_id):
 # Add Comment
 @login_required
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.user = request.user
-            comment.save()
-    return redirect('mainpage')
+        post = get_object_or_404(Post, id=post_id)
+        content = request.POST.get('content')
+        if content:
+            Comment.objects.create(post=post, user=request.user, content=content)
+        return redirect('mainpage')
 
 # Logout
 def logout_view(request):
@@ -131,20 +130,83 @@ def saved_posts(request):
     saved_posts = request.user.saved_posts.all()
     return render(request, 'saved_posts.html', {'saved_posts': saved_posts})
 
+@login_required
+def friends_view(request):
+    friends = Friend.objects.filter(user=request.user)
+    friend_requests = FriendRequest.objects.filter(receiver=request.user)
+
+    suggestions = User.objects.exclude(
+        Q(id__in=friends.values_list('friend_id', flat=True)) |
+        Q(id__in=friend_requests.values_list('sender_id', flat=True)) |
+        Q(id=request.user.id)
+    )
+
+    return render(request, 'friends.html', {
+        'friends': friends,
+        'friend_requests': friend_requests,
+        'suggestions': suggestions,
+    })
+
+@login_required
+def delete_friend(request, friend_id):
+    try:
+        friend = Friend.objects.get(user=request.user, friend_id=friend_id)
+        friend.delete()  
+        reciprocal_friend = Friend.objects.get(user_id=friend_id, friend=request.user)
+        reciprocal_friend.delete()
+
+    except Friend.DoesNotExist:
+        raise Http404("Friend does not exist.")
+
+    return redirect('friends')
+
+@login_required
+def accept_friend_request(request, request_id):
+    friend_request = FriendRequest.objects.get(id=request_id, receiver=request.user)
+    Friend.objects.create(user=request.user, friend=friend_request.sender)
+    Friend.objects.create(user=friend_request.sender, friend=request.user)
+    Notification.objects.create(
+        type='friend_accept',
+        sender=request.user,
+        receiver=friend_request.sender
+    )
+
+    friend_request.delete()
+    return redirect('friends')
+
+@login_required
+def decline_friend_request(request, request_id):
+    friend_request = FriendRequest.objects.get(id=request_id, receiver=request.user)
+    friend_request.delete()
+    return redirect('friends')
+
+@login_required
+def send_friend_request(request, user_id):
+    receiver = User.objects.get(id=user_id)
+    if not FriendRequest.objects.filter(sender=request.user, receiver=receiver).exists():
+        FriendRequest.objects.create(sender=request.user, receiver=receiver)
+        Notification.objects.create(
+            type='friend_request',
+            sender=request.user,
+            receiver=receiver
+        )
+    return redirect('friends')
 
 from django.shortcuts import render
 from .models import Post, Like
 
 @login_required
 def notifications(request):
-    # Get all posts by the logged-in user
+
     user_posts = Post.objects.filter(user=request.user)
-    
-    # Get all likes on the user's posts
+
     likes = Like.objects.filter(post__in=user_posts).select_related('user', 'post')
     
-    return render(request, 'notifications.html', {'likes': likes})
-
+    friend_notifications = Notification.objects.filter(receiver=request.user)
+    return render(request, 'notifications.html', {
+        'likes': likes,
+        'friend_notifications': friend_notifications,
+    })
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -153,7 +215,14 @@ from django.contrib.auth.decorators import login_required
 def menu_view(request):
     return render(request, 'menu.html')
 
+def user_profile_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    posts = Post.objects.filter(user=user)
 
+    return render(request, 'user_profile.html', {
+        'profile_user': user,
+        'posts': posts,
+    })
 # view models through APIs using REST Framework.
 
 from rest_framework import viewsets

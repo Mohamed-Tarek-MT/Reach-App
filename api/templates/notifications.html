@@ -160,27 +160,39 @@
         </nav>
     </header>
 
-    <main class="container">
-        <h2>Your Notifications</h2>
-        <section class="notifications-section">
-            {% if likes %}
-                <ul>
-                    {% for like in likes %}
-                        <li>
-                            <div class="icon">👍</div>
-                            <div>
-                                <strong>{{ like.user.username }}</strong> liked your post:
-                                <blockquote>{{ like.post.content|default:"[Image Post]" }}</blockquote>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="no-notifications">
-                    <p>No new notifications.</p>
-                </div>
-            {% endif %}
-        </section>
+    <section class="notifications-section">
+        {% if likes or friend_notifications %}
+            <ul>
+                {% for like in likes %}
+                    <li>
+                        <div class="icon">👍</div>
+                        <div>
+                            <strong>{{ like.user.username }}</strong> liked your post:
+                            <blockquote>{{ like.post.content|default:"[Image Post]" }}</blockquote>
+                        </div>
+                    </li>
+                {% endfor %}
+    
+                {% for notification in friend_notifications %}
+                    <li>
+                        <div class="icon">🤝</div>
+                        <div>
+                            {% if notification.type == 'friend_request' %}
+                                <strong>{{ notification.sender.username }}</strong> sent you a friend request.
+                            {% elif notification.type == 'friend_accept' %}
+                                <strong>{{ notification.sender.username }}</strong> accepted your friend request.
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-notifications">
+                <p>No new notifications.</p>
+            </div>
+        {% endif %}
+    </section>
+    
     </main>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user.username }}'s Profile - Reach</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <h1 class="brand">Reach</h1>
+        <nav class="navbar">
+            <a href="{% url 'mainpage' %}" class="nav-item">Home</a>
+            <a href="{% url 'notifications' %}" class="nav-item">Notifications</a>
+            <a href="{% url 'friends' %}" class="nav-item">Friends</a>
+            <a href="{% url 'logout' %}" class="nav-item">Log Out</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>{{ profile_user.username }}'s Profile</h2>
+        
+        <section class="posts-section">
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-card">
+                    <p>{{ post.content }}</p>
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                    {% endif %}
+                    <p><small>Posted on {{ post.created_at }}</small></p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No Posts</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

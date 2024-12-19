@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends - Reach</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f4f4f9, #e4efff);
+        }
+
+        .header {
+            background: #007bff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .friends-section, .requests-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .friend-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .friend-name {
+            font-size: 18px;
+        }
+
+        .action-btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #0056b3;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="brand">Reach</h1>
+        <nav class="navbar">
+            <a href="{% url 'mainpage' %}" class="nav-item">Home</a>
+            <a href="{% url 'friends' %}" class="nav-item">Friends</a>
+            <a href="{% url 'notifications' %}" class="nav-item">Notifications</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="friends-section">
+            <h2 class="section-title">Your Friends</h2>
+            {% for friend in friends %}
+            <div class="friend-card">
+                <span class="friend-name">{{ friend.friend.username }}</span>
+                <form method="POST" action="{% url 'delete_friend' friend.friend.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+
+        <section class="requests-section">
+            <h2 class="section-title">Friend Requests</h2>
+            {% for request in friend_requests %}
+            <div class="friend-card">
+                <span class="friend-name">{{ request.sender.username }}</span>
+                <div>
+                    <form method="POST" action="{% url 'accept_friend_request' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn">Accept</button>
+                    </form>
+                    <form method="POST" action="{% url 'decline_friend_request' request.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Decline</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        <section class="suggestions-section">
+            <h2 class="section-title">Friend Suggestions</h2>
+            {% for suggestion in suggestions %}
+            <div class="friend-card">
+                <span class="friend-name">{{ suggestion.username }}</span>
+                <form method="POST" action="{% url 'send_friend_request' suggestion.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn">Add Friend</button>
+                </form>
+            </div>
+            {% endfor %}
+        </section>
+        
+    </main>
+</body>
+</html>
