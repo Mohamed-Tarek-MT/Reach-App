@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Group Settings</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .settings-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+        .settings-container h1 {
+            color: #007bff;
+        }
+        input[type="text"], 
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+        .submit-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #0056b3, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        .back-btn {
+            background-color: transparent;
+            color: #007bff;
+            text-decoration: underline;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <h1>Edit Group Settings</h1>
+        <form id="settings-form">
+            <input type="text" id="group-name" placeholder="Group Name" required>
+            <input type="text" id="group-bio" placeholder="Short Bio" required>
+            <input type="file" id="profile-pic" accept="image/*">
+            <input type="file" id="cover-photo" accept="image/*">
+            <label for="category">Group Category</label>
+            <select id="category" name="category" required>
+                <option value="study">Study Group</option>
+                <option value="sports">Sports Group</option>
+                <option value="work">Work Group</option>
+                <option value="gaming">Gaming Group</option>
+                <option value="hobby">Hobby Group</option>
+                <option value="social">Social Group</option>
+            </select>
+            <label for="privacy">Privacy</label>
+            <select id="privacy" name="privacy" required>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+                <option value="hidden">Hidden</option>
+            </select>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+        <button class="back-btn" onclick="window.history.back();">Back to Group</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const groupName = localStorage.getItem('groupName');
+            const groupBio = localStorage.getItem('groupBio');
+            const profilePic = localStorage.getItem('profilePic');
+            const coverPhoto = localStorage.getItem('coverPhoto');
+            const groupCategory = localStorage.getItem('groupCategory');
+            const groupPrivacy = localStorage.getItem('groupPrivacy');
+
+            document.getElementById('group-name').value = groupName || '';
+            document.getElementById('group-bio').value = groupBio || '';
+            document.getElementById('category').value = groupCategory || 'study';
+            document.getElementById('privacy').value = groupPrivacy || 'public';
+
+            if (profilePic) {
+                document.getElementById('profile-pic').setAttribute('data-preview', profilePic);
+            }
+            if (coverPhoto) {
+                document.getElementById('cover-photo').setAttribute('data-preview', coverPhoto);
+            }
+        });
+
+        document.getElementById('settings-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const groupName = document.getElementById('group-name').value;
+            const groupBio = document.getElementById('group-bio').value;
+            const profilePicFile = document.getElementById('profile-pic').files[0];
+            const coverPhotoFile = document.getElementById('cover-photo').files[0];
+            const category = document.getElementById('category').value;
+            const privacy = document.getElementById('privacy').value;
+
+            const readFileAsDataURL = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            Promise.all([
+                profilePicFile ? readFileAsDataURL(profilePicFile) : Promise.resolve(localStorage.getItem('profilePic')),
+                coverPhotoFile ? readFileAsDataURL(coverPhotoFile) : Promise.resolve(localStorage.getItem('coverPhoto'))
+            ])
+            .then(([newProfilePic, newCoverPhoto]) => {
+                localStorage.setItem('groupName', groupName);
+                localStorage.setItem('groupBio', groupBio);
+                localStorage.setItem('profilePic', newProfilePic);
+                localStorage.setItem('coverPhoto', newCoverPhoto);
+                localStorage.setItem('groupCategory', category);
+                localStorage.setItem('groupPrivacy', privacy);
+
+                alert('Group settings updated successfully!');
+                window.location.href = 'Group Created Success Page.html';
+            })
+            .catch(error => {
+                console.error('Error updating images:', error);
+            });
+        });
+    </script>
+</body>
+</html>

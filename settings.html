@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 35%;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h1 {
+            font-size: 32px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        input[type="text"], 
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+        .submit-btn, .cancel-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 12px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 48%;
+            margin: 10px 1%;
+            transition: 0.3s ease;
+        }
+        .submit-btn:hover, .cancel-btn:hover {
+            background: linear-gradient(45deg, #0056b3, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Update Profile</h1>
+        <form id="update-form">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="text" id="bio" placeholder="Short Bio" required>
+            <input type="file" id="profile-pic" accept="image/*">
+            <input type="file" id="cover-photo" accept="image/*">
+            
+            <!-- Submit and Cancel buttons -->
+            <div class="button-group">
+                <button type="submit" class="submit-btn">Update Profile</button>
+                <button type="button" class="cancel-btn" id="cancel-btn">Back to Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Pre-fill form with existing data
+        document.getElementById('name').value = localStorage.getItem('profileName') || '';
+        document.getElementById('bio').value = localStorage.getItem('profileBio') || '';
+
+        // Handle form submission for profile update
+        document.getElementById('update-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Get updated values
+            const name = document.getElementById('name').value;
+            const bio = document.getElementById('bio').value;
+            const profilePicFile = document.getElementById('profile-pic').files[0];
+            const coverPhotoFile = document.getElementById('cover-photo').files[0];
+
+            // Save to localStorage
+            localStorage.setItem('profileName', name);
+            localStorage.setItem('profileBio', bio);
+
+            if (profilePicFile) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    localStorage.setItem('profilePic', reader.result);
+                };
+                reader.readAsDataURL(profilePicFile);
+            }
+
+            if (coverPhotoFile) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    localStorage.setItem('coverPhoto', reader.result);
+                };
+                reader.readAsDataURL(coverPhotoFile);
+            }
+
+            // Redirect to profile page
+            window.location.href = 'My Profile.html';
+        });
+
+        // Handle cancel button to return to profile without changes
+        document.getElementById('cancel-btn').addEventListener('click', function() {
+            window.location.href = 'My Profile.html';
+        });
+    </script>
+</body>
+</html>

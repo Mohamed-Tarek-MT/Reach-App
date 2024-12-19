@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Created</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 35%;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .cover-photo img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .group-info {
+            text-align: center;
+            padding: 20px;
+        }
+        .group-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            margin-top: -80px;
+        }
+        h1 {
+            font-size: 32px;
+            color: #007bff;
+            margin-top: 10px;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+        .category {
+            font-size: 18px;
+            color: #00d4ff;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 12px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 48%;
+            margin: 10px 1%;
+            transition: 0.3s ease;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #0056b3, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        .message-container {
+            margin-top: 30px;
+            text-align: left;
+        }
+        .message-container textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            resize: none;
+        }
+        .message-container button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .posts {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .post {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .post .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .post .content {
+            max-width: 85%;
+        }
+        .post .content .group-name {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        .post .content .message-text {
+            font-size: 16px;
+            color: #333;
+        }
+        .post .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+        .post .delete-btn:hover {
+            background-color: #e60000;
+        }
+        .additional-links {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .additional-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .additional-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="cover-photo">
+            <img src="" alt="Cover Photo" id="cover-photo">
+        </div>
+
+        <div class="group-info">
+            <img src="" alt="Group Picture" class="group-pic" id="profile-pic">
+            <h1 id="group-name"></h1>
+            <p id="group-bio"></p>
+            <div class="category" id="group-category"></div>
+        </div>
+
+        <div class="group-actions">
+            <button id="join-btn">Join</button>
+        </div>
+
+        <div class="message-container">
+            <textarea id="message-input" placeholder="Write a message..."></textarea>
+            <button id="send-message-btn">Send Message</button>
+        </div>
+
+        <div class="posts" id="posts">
+        </div>
+
+        <div class="additional-links">
+            <a href="Setting Group.html">Edit Group</a>
+        </div>
+    </div>
+
+    <script>
+        const groupName = localStorage.getItem('groupName');
+        const groupBio = localStorage.getItem('groupBio');
+        const profilePic = localStorage.getItem('profilePic');
+        const coverPhoto = localStorage.getItem('coverPhoto');
+        const groupCategory = localStorage.getItem('groupCategory');
+
+        document.getElementById('group-name').textContent = groupName;
+        document.getElementById('group-bio').textContent = groupBio;
+        document.getElementById('group-category').textContent = `Category: ${groupCategory}`;
+        document.getElementById('profile-pic').src = profilePic;
+        document.getElementById('cover-photo').src = coverPhoto;
+
+        document.getElementById('join-btn').addEventListener('click', function() {
+            this.textContent = this.textContent === 'Join' ? 'Joined' : 'Join';
+        });
+
+        const sendMessageBtn = document.getElementById('send-message-btn');
+        const messageInput = document.getElementById('message-input');
+        const postsContainer = document.getElementById('posts');
+
+        sendMessageBtn.addEventListener('click', function() {
+            const messageText = messageInput.value.trim();
+            if (messageText) {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+
+                const profilePicElement = document.createElement('img');
+                profilePicElement.src = profilePic;
+                profilePicElement.alt = 'Profile Picture';
+                profilePicElement.classList.add('profile-pic');
+
+                const postContent = document.createElement('div');
+                postContent.classList.add('content');
+
+                const groupNameElement = document.createElement('div');
+                groupNameElement.classList.add('group-name');
+                groupNameElement.textContent = groupName;
+
+                const messageTextElement = document.createElement('div');
+                messageTextElement.classList.add('message-text');
+                messageTextElement.textContent = messageText;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', function() {
+                    postElement.remove();
+                });
+
+                postContent.appendChild(groupNameElement);  // Corrected line
+                postContent.appendChild(messageTextElement);
+                postElement.appendChild(profilePicElement);
+                postElement.appendChild(postContent);
+                postElement.appendChild(deleteBtn);
+
+                postsContainer.prepend(postElement);
+
+                messageInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Group</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo-section {
+            margin-bottom: 30px;
+        }
+        .logo-section h1 {
+            font-size: 36px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .logo-section p {
+            font-size: 14px;
+            color: #555;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="text"], 
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: 0.3s ease;
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+        .submit-btn {
+            background: linear-gradient(45deg,  #007bff, #0056b3);
+            color: #fff;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(45deg,  #0056b3, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        .additional-links {
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .additional-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .additional-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="logo-section">
+            <h1>Create Group</h1>
+            <p>Fill out the form below to create your Group</p>
+        </div>
+        <form id="group-form">
+            <input type="text" id="group-name" placeholder="Group name" required>
+            <input type="text" id="group-bio" placeholder="Short Bio" required>
+            <input type="file" id="profile-pic" accept="image/*" required>
+            <input type="file" id="cover-photo" accept="image/*" required>
+            <label for="category">Group Category</label>
+            <select id="category" name="category" required>
+                <option value="study">Study Group</option>
+                <option value="sports">Sports Group</option>
+                <option value="work">Work Group</option>
+                <option value="gaming">Gaming Group</option>
+                <option value="hobby">Hobby Group</option>
+                <option value="social">Social Group</option>
+            </select>
+            <label for="privacy">Privacy</label>
+            <select id="privacy" name="privacy" required>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+                <option value="hidden">Hidden</option>
+            </select>
+            <button type="submit" class="submit-btn">Create Group</button>
+        </form>
+        <div class="additional-links">
+            <a href="#">Need help?</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('group-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const groupName = document.getElementById('group-name').value;
+            const groupBio = document.getElementById('group-bio').value;
+            const profilePicFile = document.getElementById('profile-pic').files[0];
+            const coverPhotoFile = document.getElementById('cover-photo').files[0];
+            const category = document.getElementById('category').value;
+            const privacy = document.getElementById('privacy').value;
+
+            const readFileAsDataURL = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            Promise.all([readFileAsDataURL(profilePicFile), readFileAsDataURL(coverPhotoFile)])
+                .then(([profilePicDataUrl, coverPhotoDataUrl]) => {
+                    localStorage.setItem('groupName', groupName);
+                    localStorage.setItem('groupBio', groupBio);
+                    localStorage.setItem('profilePic', profilePicDataUrl);
+                    localStorage.setItem('coverPhoto', coverPhotoDataUrl);
+                    localStorage.setItem('groupCategory', category);
+                    localStorage.setItem('groupPrivacy', privacy);
+
+                    window.location.href = 'Group Created Success Page.html';
+                })
+                .catch(error => {
+                    console.error('Error reading image files:', error);
+                });
+        });
+    </script>
+</body>
+</html>
