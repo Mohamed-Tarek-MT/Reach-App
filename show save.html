@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Post - Reach</title>
+    <title>Post Saved - Reach</title>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            background: linear-gradient(to bottom right, #28a745, #28d475);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,7 +17,7 @@
             color: #fff;
         }
 
-        .save-container {
+        .saved-container {
             background: #fff;
             color: #333;
             width: 50%;
@@ -42,7 +42,7 @@
 
         h1 {
             font-size: 24px;
-            color: #007bff;
+            color: #28a745;
             margin-bottom: 20px;
         }
 
@@ -59,13 +59,11 @@
         }
 
         .button-container {
-            display: flex;
-            justify-content: space-around;
             margin-top: 20px;
         }
 
-        .save-btn {
-            background-color: #007bff;
+        .back-btn {
+            background-color: #28a745;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -74,56 +72,21 @@
             cursor: pointer;
         }
 
-        .save-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .cancel-btn {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .cancel-btn:hover {
-            background-color: #555;
-        }
-
-        .post-content {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .back-btn:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <div class="save-container">
-        <h1>Are you sure you want to save this post?</h1>
+    <div class="saved-container">
+        <h1>Your post has been saved!</h1>
         <div class="post-content">
-            <p>Sample post content here. This is the text of the post you are about to save.</p>
-            <img src="https://via.placeholder.com/150" alt="Post Image">
+            <p>This is the content of the saved post.</p>
+            <img src="https://via.placeholder.com/150" alt="Saved Post Image">
         </div>
         <div class="button-container">
-            <button class="save-btn" onclick="savePost()">Yes, Save</button>
-            <a href="#" class="cancel-btn" onclick="cancelSave()">Cancel</a>
+            <a href="save post.html" class="back-btn">Back to Main Page</a>
         </div>
     </div>
-
-    <script>
-        function savePost() {
-            // Redirect to saved_post.html
-            window.location.href = "show save.html";
-        }
-
-        function cancelSave() {
-            alert("Post save canceled.");
-        }
-    </script>
 </body>
 </html>
