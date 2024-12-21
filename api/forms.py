@@ -57,3 +57,6 @@ class PostForm(forms.ModelForm):
             raise forms.ValidationError("You must provide either text or an image.")
         
         return cleaned_data
+
+
+

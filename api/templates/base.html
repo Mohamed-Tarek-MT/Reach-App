@@ -1,0 +1,6 @@
+<a href="{% url 'notifications' %}" class="nav-item">
+    Notifications
+    {% if request.session.unread_notifications_count > 0 %}
+        <span class="notification-badge">{{ request.session.unread_notifications_count }}</span>
+    {% endif %}
+</a>

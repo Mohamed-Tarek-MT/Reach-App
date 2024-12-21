@@ -3,6 +3,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import permissions
+from api.views import reset_password_request, reset_password_confirm
+
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi

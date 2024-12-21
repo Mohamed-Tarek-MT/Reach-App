@@ -2,6 +2,8 @@ from django.urls import path, include
 from .views import signup, login_view, mainpage, logout_view, create_post, delete_post, profile_view, like_post, add_comment,notifications,menu_view,delete_friend,accept_friend_request,decline_friend_request,friends_view,send_friend_request ,user_profile_view
 from rest_framework.routers import DefaultRouter
 from .views import PostViewSet, CommentViewSet, LikeViewSet 
+from . import views
+
 
 router = DefaultRouter()
 router.register(r'posts', PostViewSet)
@@ -26,6 +28,8 @@ urlpatterns = [
     path('profile/<int:user_id>/', profile_view, name='profile'),
     path('notifications/', notifications, name='notifications'),
     path('menu/', menu_view, name='menu'),
+    path('reset-password/', views.reset_password_request, name='reset_password_request'),
+    path('confirm-reset/<uidb64>/<token>/', views.reset_password_confirm, name='reset_password_confirm'),
     
     path('', include(router.urls)),
 ]

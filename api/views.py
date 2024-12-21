@@ -7,6 +7,63 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from .models import Post, Comment, Like ,Friend, FriendRequest ,Notification
 from .forms import PostForm, CommentForm
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.http import HttpResponse
+from api.models import Post, Comment, Like, Friend, FriendRequest, Notification
+from django.urls import reverse
+from rest_framework import viewsets
+from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+
+token_generator = PasswordResetTokenGenerator()
+
+def reset_password_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            print(f"Password for {user.username}: {user.password}")
+
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_link = request.build_absolute_uri(
+                reverse('reset_password_confirm', kwargs={'uidb64': uid, 'token': token})
+            )
+
+            send_mail(
+                'Password Reset Request',
+                f'Click the link to reset your password: {reset_link}',
+                'your_email@gmail.com',
+                [email],
+                fail_silently=False,
+            )
+            print(f"Password reset link sent to {email}: {reset_link}")
+            return HttpResponse("A reset link has been sent to your email.")
+        except User.DoesNotExist:
+            return HttpResponse("This email does not exist in our system.")
+    return render(request, 'reset_password_request.html')
+
+
+
+def reset_password_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        if token_generator.check_token(user, token): 
+            if request.method == 'POST':
+                new_password = request.POST.get('password')
+                user.set_password(new_password)
+                user.save()
+                return HttpResponse("Password reset successful.")
+            return render(request, 'reset_password_confirm.html', {'valid': True})
+        else:
+            return render(request, 'reset_password_confirm.html', {'valid': False})  
+    except Exception as e:
+        return HttpResponse("Invalid link.")
+
+
 
 # Sign Up
 def signup(request):
@@ -26,6 +83,8 @@ def signup(request):
     return render(request, 'signup.html')
 
 # Login
+from .models import Notification
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('mainpage')
@@ -35,17 +94,33 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            unread_notifications_count = Notification.objects.filter(receiver=user, is_read=False).count()
+            request.session['unread_notifications_count'] = unread_notifications_count
             return redirect('mainpage')
         else:
             messages.error(request, 'Invalid credentials.')
     return render(request, 'login.html')
+
+
 
 # Main Page
 @login_required
 def mainpage(request):
     posts = Post.objects.all()
     comment_form = CommentForm()
-    return render(request, 'mainpage.html', {'posts': posts, 'comment_form': comment_form})
+
+    unread_notifications_count = Notification.objects.filter(receiver=request.user, is_read=False).count()
+    request.session['unread_notifications_count'] = unread_notifications_count
+
+    return render(request, 'mainpage.html', {
+        'posts': posts,
+        'comment_form': comment_form,
+    })
+
+
+
+
+
 
 # Create Post
 @login_required
@@ -56,28 +131,24 @@ def create_post(request):
             post = form.save(commit=False)
             post.user = request.user
             post.save()
+            Notification.objects.create(
+                type='post', sender=request.user, receiver=request.user, post=post
+            )
             return redirect('mainpage')
-        else:
-            return render(request, 'create_post.html', {'form': form})
     else:
         form = PostForm()
     return render(request, 'create_post.html', {'form': form})
 
 # Delete Post
-from django.http import HttpResponseForbidden
-
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-
     if post.user != request.user:
         return HttpResponseForbidden("You are not allowed to delete this post.")
-
     if request.method == 'POST':
         post.delete()
         messages.success(request, 'Post deleted successfully.')
         return redirect('mainpage')
-
     return render(request, 'delete_post.html', {'post': post})
 
 # Like Post
@@ -87,6 +158,10 @@ def like_post(request, post_id):
     like, created = Like.objects.get_or_create(post=post, user=request.user)
     if not created:
         like.delete()
+    else:
+        Notification.objects.create(
+            type='like', sender=request.user, receiver=post.user, post=post
+        )
     return redirect('mainpage')
 
 # Add Comment
@@ -97,6 +172,9 @@ def add_comment(request, post_id):
         content = request.POST.get('content')
         if content:
             Comment.objects.create(post=post, user=request.user, content=content)
+            Notification.objects.create(
+                type='comment', sender=request.user, receiver=post.user, post=post
+            )
         return redirect('mainpage')
 
 # Logout
@@ -117,10 +195,10 @@ def profile_view(request, user_id):
 def save_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if post.saved_by.filter(id=request.user.id).exists():
-        post.saved_by.remove(request.user)  # Remove from saved posts if already saved
+        post.saved_by.remove(request.user)
         messages.info(request, 'Post unsaved.')
     else:
-        post.saved_by.add(request.user)  # Add to saved posts
+        post.saved_by.add(request.user)
         messages.success(request, 'Post saved successfully.')
     return redirect('mainpage')
 
@@ -129,6 +207,24 @@ def save_post(request, post_id):
 def saved_posts(request):
     saved_posts = request.user.saved_posts.all()
     return render(request, 'saved_posts.html', {'saved_posts': saved_posts})
+
+from django.db.models import Count
+
+@login_required
+def notifications(request):
+    user_posts = Post.objects.filter(user=request.user)
+    likes = Like.objects.filter(post__in=user_posts).select_related('user', 'post')
+    friend_notifications = Notification.objects.filter(receiver=request.user)
+
+    friend_notifications.update(is_read=True)
+    request.session['unread_notifications_count'] = 0
+
+    return render(request, 'notifications.html', {
+        'likes': likes,
+        'friend_notifications': friend_notifications,
+    })
+
+
 
 @login_required
 def friends_view(request):
@@ -195,19 +291,6 @@ def send_friend_request(request, user_id):
 from django.shortcuts import render
 from .models import Post, Like
 
-@login_required
-def notifications(request):
-
-    user_posts = Post.objects.filter(user=request.user)
-
-    likes = Like.objects.filter(post__in=user_posts).select_related('user', 'post')
-    
-    friend_notifications = Notification.objects.filter(receiver=request.user)
-    return render(request, 'notifications.html', {
-        'likes': likes,
-        'friend_notifications': friend_notifications,
-    })
-
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -223,6 +306,8 @@ def user_profile_view(request, user_id):
         'profile_user': user,
         'posts': posts,
     })
+
+
 # view models through APIs using REST Framework.
 
 from rest_framework import viewsets
