@@ -243,24 +243,47 @@
                 <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
                 {% endif %}
                 <p><small>Posted on {{ post.created_at }}</small></p>
-
+        
                 <div class="post-actions">
                     <form method="POST" action="{% url 'like_post' post.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="action-btn">Like</button>
+                        <button type="submit" class="action-btn">
+                            {% if request.user in post.likes.all %}
+                                Unlike
+                            {% else %}
+                                Like
+                            {% endif %}
+                        </button>
                         <span>{{ post.likes.count }} Likes</span>
                     </form>
+                    {% if post.user == request.user %} 
+                    <form method="POST" action="{% url 'delete_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Delete Post</button>
+                    </form>
+                    {% endif %}
                 </div>
-
+        
                 <div class="comments-section">
                     {% for comment in post.comments.all %}
                     <div class="comment">
                         <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
                         <small><em>{{ comment.created_at }}</em></small>
+                        <form method="POST" action="{% url 'like_comment' comment.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn">
+                                {% if request.user in comment.likes.all %}
+                                    👎
+                                {% else %}
+                                    👍
+                                {% endif %}
+                            </button>
+                            <span>{{ comment.likes.count }} Likes</span>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
-
+        
                 <form method="POST" action="{% url 'add_comment' post.id %}">
                     {% csrf_token %}
                     <input type="text" name="content" placeholder="Write a comment..." class="comment-input" required>
@@ -268,7 +291,7 @@
                 </form>
             </div>
             {% endfor %}
-        </section>
+        </section>        
 
     </main>
 </body>

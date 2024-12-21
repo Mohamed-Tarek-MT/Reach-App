@@ -99,6 +99,16 @@ def add_comment(request, post_id):
             Comment.objects.create(post=post, user=request.user, content=content)
         return redirect('mainpage')
 
+#like comment
+@login_required
+def like_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user in comment.likes.all():
+        comment.likes.remove(request.user)  
+    else:
+        comment.likes.add(request.user) 
+    return redirect('mainpage')  
+
 # Logout
 def logout_view(request):
     logout(request)
