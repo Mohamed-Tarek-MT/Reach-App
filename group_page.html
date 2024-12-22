@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #f4f4f9, #e4efff);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: #007bff;
+        }
+        .form-section, .groups-section {
+            margin-top: 20px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 10px 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .group-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .group-card h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        .group-card p {
+            margin: 5px 0 0;
+            color: #555;
+        }
+        .group-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn.leave {
+            background: #dc3545;
+        }
+        .btn.leave:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Groups</h1>
+        </div>
+
+        <div class="form-section">
+            <h2>Create a New Group</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Create Group</button>
+            </form>
+        </div>
+
+        <div class="groups-section">
+            <h2>Available Groups</h2>
+            {% for group in groups %}
+            <div class="group-card">
+                <div>
+                    <h3>{{ group.name }}</h3>
+                    <p>{{ group.description }}</p>
+                    <p><small>{{ group.members_count }} members</small></p>
+                </div>
+                <div class="group-actions">
+                    {% if user in group.members.all %}
+                    <a href="{% url 'leave_group' group.id %}" class="btn leave">Leave</a>
+                    {% else %}
+                    <a href="{% url 'join_group' group.id %}" class="btn">Join</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p>No groups available. Be the first to create one!</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

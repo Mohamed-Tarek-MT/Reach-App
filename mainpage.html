@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page - Reach</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f4f4f9, #e4efff);
+        }
+
+        .header {
+            background: #007bff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .navbar {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-item {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: #ffd700;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .create-post-btn {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .create-post-btn:hover {
+            background: #0056b3;
+        }
+
+        .posts-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #007bff;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .user-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .user-link:hover {
+            text-decoration: underline;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .action-btn,
+        .delete-btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #0056b3;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background: #a71d2a;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .comments-section {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="brand">Reach</h1>
+        <nav class="navbar">
+            <a href="#" class="nav-item">Home</a>
+            <a href="{% url 'friends' %}" class="nav-item">Friends</a>
+            <a href="{% url 'notifications' %}" class="nav-item">Notifications</a>
+            <a href="{% url 'message' %}" class="nav-item">Messages</a>
+            <a href="{% url 'group' %}" class="nav-item">Groups</a>
+            <a href="{% url 'profile' request.user.id %}" class="nav-item">MyProfile</a>
+            <a href="{% url 'menu' %}" class="nav-item">Menu</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="actions">
+            <a href="{% url 'create_post' %}" class="create-post-btn">New Post?</a>
+        </div>
+
+        <section class="posts-section">
+            {% for post in posts %}
+            <div class="post-card">
+                <h3 class="user-info">
+                    <div class="user-avatar-circle">
+                        {{ post.user.username|slice:":1"|upper }}
+                    </div>
+                    <a href="{% url 'profile' post.user.id %}" class="user-link">{{ post.user.username }}</a>
+                </h3>
+                <p>{{ post.content }}</p>
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                {% endif %}
+                <p><small>Posted on {{ post.created_at }}</small></p>
+                <div class="post-actions">
+                    <form method="POST" action="{% url 'like_post' post.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn">Like ({{ post.likes_count }})</button>
+                    </form>
+                    <form method="POST" action="{% url 'add_comment' post.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="text" name="comment" placeholder="Add a comment..." class="comment-input" required>
+                        <button type="submit" class="action-btn">Comment</button>
+                    </form>
+                    {% if post.user == request.user %}
+                    <form method="POST" action="{% url 'delete_post' post.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+</body>
+</html>

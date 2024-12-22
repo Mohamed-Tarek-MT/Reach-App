@@ -1,0 +1,16 @@
+<h1>Groups</h1>
+<a href="{% url 'create_group' %}">Create a New Group</a>
+<ul>
+    {% for group in groups %}
+        <li>
+            <h2>{{ group.name }}</h2>
+            <p>{{ group.description }}</p>
+            {% if user in group.members.all %}
+                <p>You are a member</p>
+            {% else %}
+                <a href="{% url 'join_group' group.id %}">Join Group</a>
+            {% endif %}
+            <a href="{% url 'group_detail' group.id %}">View Group</a>
+        </li>
+    {% endfor %}
+</ul>

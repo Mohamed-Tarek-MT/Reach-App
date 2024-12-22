@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Reach</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #e4efff, #d4e4ff);
+            color: #333;
+        }
+
+        .header {
+            background: #007bff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .navbar {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-item {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .nav-item:hover {
+            color: #ffd700;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .notifications-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        li:hover {
+            background: #f1f7ff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        blockquote {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+
+        .no-notifications {
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 class="brand">Reach</h1>
+        <nav class="navbar">
+            <a href="{% url 'mainpage' %}" class="nav-item">Home</a>
+            <a href="#" class="nav-item active">Notifications</a>
+            <a href="{% url 'logout' %}" class="nav-item">Log Out</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Your Notifications</h2>
+        <section class="notifications-section">
+            {% if likes %}
+                <ul>
+                    {% for like in likes %}
+                        <li>
+                            <div class="icon">👍</div>
+                            <div>
+                                <strong>{{ like.user.username }}</strong> liked your post:
+                                <blockquote>{{ like.post.content|default:"[Image Post]" }}</blockquote>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="no-notifications">
+                    <p>No new notifications.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

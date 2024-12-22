@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .group h2 {
+            margin: 0;
+            color: #007bff;
+        }
+
+        .group p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .group button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .group button.leave {
+            background-color: #dc3545;
+        }
+
+        .group button:hover {
+            background-color: #0056b3;
+        }
+
+        .group button.leave:hover {
+            background-color: #c82333;
+        }
+
+        .create-group {
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .create-group a {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .create-group a:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Groups</h1>
+
+        <div class="create-group">
+            <a href="{% url 'create_group' %}">Create a New Group</a>
+        </div>
+
+        {% for group in groups %}
+        <div class="group">
+            <div>
+                <h2>{{ group.name }}</h2>
+                <p>{{ group.description }}</p>
+            </div>
+            {% if user in group.members.all %}
+            <button class="leave" onclick="location.href='{% url 'leave_group' group.id %}'">Leave</button>
+            {% else %}
+            <button onclick="location.href='{% url 'join_group' group.id %}'">Join</button>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No groups available. Create one to get started!</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

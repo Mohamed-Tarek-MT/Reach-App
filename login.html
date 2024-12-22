@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Reach</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 35%;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo-section {
+            margin-bottom: 30px;
+        }
+        .logo-section h1 {
+            font-size: 48px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .logo-section p {
+            font-size: 16px;
+            color: #555;
+        }
+        .error-message {
+            color: #ff4d4f;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        form {
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-spacing: 10px;
+        }
+        th {
+            text-align: center;
+            font-size: 24px;
+            color: #ffffff;
+            background-color: #007bff;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        td {
+            font-size: 16px;
+            color: #333;
+        }
+        input[type="text"], 
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+        .submit-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 12px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #0056b3, #007bff);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        .additional-links {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .additional-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .additional-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="logo-section">
+            <h1>Reach</h1>
+            <p>Welcome back! Log in to access your dashboard and explore new possibilities.</p>
+        </div>
+
+    
+
+        <form method="POST">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <th>Log In</th>
+                </tr>
+                <tr>
+                    <td>Username:</td>
+                </tr>
+                <tr>
+                    <td><input type="text" name="username" placeholder="Enter your username" required></td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                </tr>
+                <tr>
+                    <td><input type="password" name="password" placeholder="Enter your password" required></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit" class="submit-btn">Log In</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <div class="additional-links">
+            {% if messages %}
+            {% for message in messages %}
+                <p class="error-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+            <a href="#">Forgot your password?</a>
+            <a href="{% url 'signup' %}">Create an account</a>
+        </div>
+    </div>
+</body>
+</html>

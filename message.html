@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        li span {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .reply-form {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .reply-form button {
+            width: auto;
+            padding: 10px 20px;
+            align-self: flex-end;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo.png" alt="Reach Logo">
+        <h1>Reach</h1>
+    </div>
+
+    <div class="container">
+        <h1>Messages</h1>
+
+        {% if error %}
+            <p style="color: red; text-align: center;">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <label for="receiver">Send to (username):</label>
+            <input type="text" id="receiver" name="receiver" required>
+
+            <label for="content">Message:</label>
+            <textarea id="content" name="content" required></textarea>
+
+            <button type="submit">Send</button>
+        </form>
+
+        <h2>Sent Messages</h2>
+        <ul>
+            {% for message in sent_messages %}
+                <li>
+                    <strong>To {{ message.receiver.username }}:</strong> {{ message.content }}
+                    <span>{{ message.timestamp }}</span>
+                </li>
+            {% empty %}
+                <li>No messages sent.</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Received Messages</h2>
+        <ul>
+            {% for message in received_messages %}
+                <li>
+                    <strong>From {{ message.sender.username }}:</strong> {{ message.content }}
+                    <span>{{ message.timestamp }}</span>
+                    <form method="POST" class="reply-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="receiver" value="{{ message.sender.username }}">
+                        <textarea name="content" placeholder="Write your reply here..." required></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+                </li>
+            {% empty %}
+                <li>No messages received.</li>
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'mainpage' %}">Back to Main Page</a>
+    </div>
+</body>
+</html>

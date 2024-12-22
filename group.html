@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups - Reach</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .group {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .group h2 {
+            margin: 0 0 5px;
+            color: #007bff;
+        }
+        .group p {
+            margin: 0;
+            color: #333;
+        }
+        .form-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            text-align: center;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Reach</h1>
+    </div>
+    <div class="container">
+        <h1>Groups</h1>
+        <div class="group">
+            <h2>Group 1</h2>
+            <p>Description for Group 1.</p>
+        </div>
+        <div class="group">
+            <h2>Group 2</h2>
+            <p>Description for Group 2.</p>
+        </div>
+        <div class="group">
+            <h2>Group 3</h2>
+            <p>Description for Group 3.</p>
+        </div>
+
+        <div class="form-section">
+            <h2>Create a New Group</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="group_name" placeholder="Enter group name" required>
+                <textarea name="group_description" placeholder="Enter group description" rows="3" required></textarea>
+                <button type="submit">Create Group</button>
+            </form>
+        </div>
+
+        <a href="{% url 'mainpage' %}">Back to Main Page</a>
+    </div>
+</body>
+</html>

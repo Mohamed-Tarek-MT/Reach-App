@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Post - Reach</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom right, #007bff, #00d4ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            animation: fadeInBackground 2s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from {
+                opacity: 0;
+                background-position: top;
+            }
+            to {
+                opacity: 1;
+                background-position: center;
+            }
+        }
+
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 1200px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            width: 40%;
+            text-align: center;
+            background-color: #007bff;
+            border-radius: 15px;
+            color: white;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .logo-section p {
+            font-size: 16px;
+            margin-top: 15px;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+
+        .form-section {
+            width: 60%;
+            padding: 30px;
+        }
+
+        .form-section h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #007bff;
+            text-align: center;
+        }
+
+        .form-container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            background-color: #f9f9f9;
+        }
+
+        table {
+            width: 100%;
+            border-spacing: 15px;
+        }
+
+        th {
+            text-align: center;
+            font-size: 20px;
+            color: #ffffff;
+            background-color: #007bff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .post-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .post-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        .cancel-link {
+            margin-left: 15px;
+            color: #555;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .cancel-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+     
+        <div class="logo-section">
+            <h1>Reach</h1>
+            <p>Welcome to a world where your ideas take flight! Share your moments and inspire others today.</p>
+        </div>
+
+       
+        <div class="form-section">
+            <h2>Create a New Post</h2>
+            <div class="form-container">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <table>
+                        <tr>
+                            <th colspan="2">Post Details</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                {% if form.non_field_errors %}
+                                    <div class="error-message">
+                                        {{ form.non_field_errors }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%; font-weight: bold;">Content:</td>
+                            <td>{{ form.content }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Image:</td>
+                            <td>{{ form.image }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">
+                                <button type="submit" class="post-btn">Post</button>
+                                <a href="{% url 'mainpage' %}" class="cancel-link">Cancel</a>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
